@@ -1,0 +1,32 @@
+<%= form_with(model: time_entry) do |form| %>
+  <% if time_entry.errors.any? %>
+    <div class="alert alert-warning">
+      <h4><%= pluralize(time_entry.errors.count, "error") %> prevented saving:</h4>
+      <ul>
+        <% time_entry.errors.each do |e| %><li><%= e.full_message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :ticket_ref %>
+    <%= form.text_field :ticket_ref, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :task_name %>
+    <%= form.text_field :task_name, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :notes, "What was accomplished?" %>
+    <%= form.text_area :notes, rows: 4, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :category %>
+    <%= form.select :category, ["bau", "project", "meeting"], {}, class: "form-select" %>
+  </div>
+
+  <%= form.submit class: "btn btn-success" %>
+<% end %>

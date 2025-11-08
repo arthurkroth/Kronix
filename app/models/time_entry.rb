@@ -1,0 +1,13 @@
+class TimeEntry < ApplicationRecord
+  belongs_to :user
+
+  # Basic helpers
+  def active?
+    ended_at.nil?
+  end
+
+  def hours
+    return 0 unless ended_at && started_at
+    ((ended_at - started_at) / 3600.0).round(2)
+  end
+end

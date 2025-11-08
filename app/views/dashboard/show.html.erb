@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="mb-3">Time Tracker</h1>
+  <div>
+    <% if @active_entry %>
+      <%= button_to "Stop", stop_timer_path, method: :post, class: "btn btn-danger" %>
+    <% else %>
+      <%= form_with url: start_timer_path, method: :post, class: "d-inline" do |f| %>
+        <%= hidden_field_tag :category, "bau" %>
+        <%= f.submit "Start BAU", class: "btn btn-primary" %>
+      <% end %>
+      <%= form_with url: start_timer_path, method: :post, class: "d-inline ms-2" do |f| %>
+        <%= hidden_field_tag :category, "project" %>
+        <%= f.submit "Start Project", class: "btn btn-outline-primary" %>
+      <% end %>
+      <%= form_with url: start_timer_path, method: :post, class: "d-inline ms-2" do |f| %>
+        <%= hidden_field_tag :category, "meeting" %>
+        <%= f.submit "Start Meeting", class: "btn btn-outline-secondary" %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<% if @active_entry %>
+  <div class="alert alert-info">
+    <strong>Active since:</strong>
+    <%= @active_entry.started_at.strftime("%H:%M") %> —
+    <span id="running-seconds" data-start="<%= @active_entry.started_at.to_i %>"></span>
+  </div>
+<% end %>
+
+<hr>
+
+<h3>Last 30 days (hours per day)</h3>
+<%= line_chart @by_day, xtitle: "Date", ytitle: "Hours" %>
+
+<h3 class="mt-4">Total time by category</h3>
+<%= pie_chart @by_category, donut: true %>
+
+<!-- Tiny inline timer script for display only -->
+<script>
+(function() {
+  var el = document.getElementById("running-seconds");
+  if (!el) return;
+  var startedAtMs = parseInt(el.dataset.start, 10) * 1000;
+
+  function fmt(n){ return n.toString().padStart(2,'0'); }
+
+  function tick() {
+    var secs = Math.floor((Date.now() - startedAtMs) / 1000);
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor((secs % 3600) / 60);
+    var s = secs % 60;
+    el.textContent = h + "h " + fmt(m) + "m " + fmt(s) + "s";
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>

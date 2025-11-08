@@ -1,0 +1,56 @@
+<h1>My Time Entries</h1>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <%= form_with url: time_entries_path, method: :get, local: true, class: "row g-2" do %>
+      <div class="col-md-3">
+        <label class="form-label">Start date</label>
+        <%= text_field_tag :start_date, @start_date, class: "form-control" %>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">End date</label>
+        <%= text_field_tag :end_date, @end_date, class: "form-control" %>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Category</label>
+        <%= select_tag :category, options_for_select([["All",""],["BAU","bau"],["Project","project"],["Meeting","meeting"]], params[:category]), class: "form-select" %>
+      </div>
+      <div class="col-md-3 d-flex align-items-end">
+        <%= submit_tag "Filter", class: "btn btn-primary w-100" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Started</th>
+      <th>Ended</th>
+      <th>Hours</th>
+      <th>Category</th>
+      <th>Ticket</th>
+      <th>Task</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @time_entries.each do |t| %>
+      <tr>
+        <td><%= t.started_at&.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><%= t.ended_at&.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><%= t.hours %></td>
+        <td><%= t.category %></td>
+        <td><%= t.ticket_ref %></td>
+        <td><%= t.task_name %></td>
+        <td>
+          <%= link_to "Show", t %> |
+          <%= link_to "Edit", edit_time_entry_path(t) %> |
+          <%= link_to "Delete", t, data: { turbo_method: :delete, turbo_confirm: "Delete this entry?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @time_entries %>
