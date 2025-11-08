@@ -1,0 +1,4 @@
+<% flash.each do |k, v| %>
+  <% klass = (k.to_s == "notice") ? "success" : "warning" %>
+  <div class="alert alert-<%= klass %> my-2"><%= v %></div>
+<% end %>

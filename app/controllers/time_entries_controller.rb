@@ -2,7 +2,7 @@ class TimeEntriesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_time_entry, only: %i[ show edit update destroy ]
 
-  # GET /time_entries or /time_entries.json
+  #GET /time_entries or /time_entries.json
 def index
   @start_date = params[:start_date].presence || 1.month.ago.to_date.to_s
   @end_date   = params[:end_date].presence   || Date.current.to_s
@@ -13,20 +13,20 @@ def index
   @time_entries = scope.order(started_at: :desc).page(params[:page]).per(10)
 end
 
-  # GET /time_entries/1 or /time_entries/1.json
+  #GET /time_entries/1 or /time_entries/1.json
   def show
   end
 
-  # GET /time_entries/new
+  #GET /time_entries/new
   def new
     @time_entry = TimeEntry.new
   end
 
-  # GET /time_entries/1/edit
+  #GET /time_entries/1/edit
   def edit
   end
 
-  # POST /time_entries or /time_entries.json
+  #POST /time_entries or /time_entries.json
   def create
     @time_entry = TimeEntry.new(time_entry_params)
 
@@ -41,7 +41,7 @@ end
     end
   end
 
-  # PATCH/PUT /time_entries/1 or /time_entries/1.json
+  #PATCH/PUT /time_entries/1 or /time_entries/1.json
   def update
     respond_to do |format|
       if @time_entry.update(time_entry_params)
@@ -54,7 +54,7 @@ end
     end
   end
 
-  # DELETE /time_entries/1 or /time_entries/1.json
+  #DELETE /time_entries/1 or /time_entries/1.json
   def destroy
     @time_entry.destroy!
 
@@ -64,13 +64,13 @@ end
     end
   end
 
-    # Use callbacks to share common setup or constraints between actions.
+    #Use callbacks to share common setup or constraints between actions.
   private
   def set_time_entry
     @time_entry = current_user.time_entries.find(params[:id])
   end
 
-    # Only allow a list of trusted parameters through.
+    #Only allow a list of trusted parameters through.
   def time_entry_params
     params.require(:time_entry).permit(:ticket_ref, :task_name, :notes, :category, :started_at, :ended_at, :duration_seconds)
   end

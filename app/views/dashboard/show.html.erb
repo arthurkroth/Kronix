@@ -8,10 +8,12 @@
         <%= hidden_field_tag :category, "bau" %>
         <%= f.submit "Start BAU", class: "btn btn-primary" %>
       <% end %>
+
       <%= form_with url: start_timer_path, method: :post, class: "d-inline ms-2" do |f| %>
         <%= hidden_field_tag :category, "project" %>
         <%= f.submit "Start Project", class: "btn btn-outline-primary" %>
       <% end %>
+
       <%= form_with url: start_timer_path, method: :post, class: "d-inline ms-2" do |f| %>
         <%= hidden_field_tag :category, "meeting" %>
         <%= f.submit "Start Meeting", class: "btn btn-outline-secondary" %>
