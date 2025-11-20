@@ -1,38 +1,102 @@
 <div class="container py-3">
   <h1>My Team</h1>
 
+  <div class="row">
+    <div class="col-lg-6">
+      <h4>Current team members</h4>
+      <% if @team_members.any? %>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @team_members.each do |u| %>
+              <tr>
+                <td><%= u.email %></td>
+                <td><%= u.role %></td>
+                <td class="text-end">
+                  <%= button_to "Remove",
+                                manager_remove_member_path(u),
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger",
+                                form: { data: { turbo_confirm: "Remove #{u.email} from your team?" } } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-muted">You have no team members yet.</p>
+      <% end %>
+    </div>
+
+    <div class="col-lg-6">
+      <h4>Add team member</h4>
+      <% if @available_users.any? %>
+        <%= form_with url: manager_add_member_path, method: :post, local: true, class: "row g-2" do %>
+          <div class="col-md-8">
+            <label class="form-label">User</label>
+            <%= select_tag :user_id,
+                  options_for_select(@available_users.map { |u| [u.email, u.id] }),
+                  class: "form-select" %>
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <%= submit_tag "Add to team", class: "btn btn-primary w-100" %>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-muted">No available users to add (everyone already has a manager or is an admin/manager).</p>
+      <% end %>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <h3>View member entries</h3>
+
   <div class="card mb-3">
     <div class="card-body">
       <%= form_with url: manager_team_path, method: :get, local: true, class: "row g-2" do %>
-        <div class="col-md-5">
+        <div class="col-md-4">
           <label class="form-label">Team member</label>
           <%= select_tag :member_id,
-                options_for_select([["(select a member)", ""]] + @team_members.map { |m| [m.email, m.id] }, params[:member_id]),
+                options_for_select(
+                  [["(select a member)", ""]] + @team_members.map { |m| [m.email, m.id] },
+                  params[:member_id]
+                ),
                 class: "form-select" %>
         </div>
         <div class="col-md-3">
           <label class="form-label">Start date</label>
-          <%= text_field_tag :start_date, params[:start_date].presence || 1.month.ago.to_date.to_s, class: "form-control" %>
+          <%= date_field_tag :start_date,
+                params[:start_date].presence || 1.month.ago.to_date,
+                class: "form-control" %>
         </div>
         <div class="col-md-3">
           <label class="form-label">End date</label>
-          <%= text_field_tag :end_date, params[:end_date].presence || Date.current.to_s, class: "form-control" %>
+          <%= date_field_tag :end_date,
+                params[:end_date].presence || Date.current,
+                class: "form-control" %>
         </div>
-        <div class="col-md-1 d-flex align-items-end">
-          <%= submit_tag "View", class: "btn btn-primary w-100" %>
+        <div class="col-md-2 d-flex align-items-end">
+          <%= submit_tag "View", class: "btn btn-outline-primary w-100" %>
         </div>
       <% end %>
     </div>
   </div>
 
-  <% if @member %>
-    <h3 class="mb-2"><%= @member.email %> – Entries</h3>
+   <% if @member && @entries_page.present? %>
+    <h4><%= @member.email %> – entries</h4>
     <table class="table table-striped">
       <thead>
         <tr>
           <th>Started</th>
           <th>Ended</th>
-          <th>Hours</th>
+          <th>Duration</th>
           <th>Category</th>
           <th>Ticket</th>
           <th>Task</th>
@@ -40,21 +104,23 @@
         </tr>
       </thead>
       <tbody>
-        <% @entries.each do |t| %>
+        <% @entries_page.each do |e| %>
           <tr>
-            <td><%= t.started_at&.strftime("%Y-%m-%d %H:%M") %></td>
-            <td><%= t.ended_at&.strftime("%Y-%m-%d %H:%M") %></td>
-            <td><%= t.hours %></td>
-            <td><%= t.category %></td>
-            <td><%= t.ticket_ref %></td>
-            <td><%= t.task_name %></td>
-            <td><%= t.project&.name %></td>
+            <td><%= e.started_at&.strftime("%Y-%m-%d %H:%M") %></td>
+            <td><%= e.ended_at&.strftime("%Y-%m-%d %H:%M") %></td>
+            <td><%= format_duration_hours(e.hours) %></td>
+            <td><%= human_category(e.category) %></td>
+            <td><%= e.ticket_ref %></td>
+            <td><%= e.task_name %></td>
+            <td><%= e.project&.name %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <%= paginate @entries %>
+    <%= paginate @entries_page %>
+  <% elsif @member %>
+    <p class="text-muted">No entries for this period.</p>
   <% else %>
-    <p class="text-muted">Pick a team member to view their entries.</p>
+    <p class="text-muted">Select a team member and date range to view their entries.</p>
   <% end %>
 </div>

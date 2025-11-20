@@ -5,7 +5,7 @@
     <div class="card-body">
       <%= form_with url: reports_path, method: :get, local: true, class: "row g-2" do %>
         <% if current_user.manager? || current_user.admin? %>
-          <div class="col-md-5">
+          <div class="col-md-4">
             <label class="form-label">User</label>
             <%= select_tag :user_id,
               options_for_select(
@@ -31,16 +31,65 @@
         <div class="col-md-2 d-flex align-items-end">
           <%= submit_tag "Generate", class: "btn btn-primary w-100" %>
         </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+          <%= link_to "Export PDF",
+                reports_path(request.query_parameters.merge(format: :pdf)),
+                class: "btn btn-outline-secondary w-100" %>
+        </div>
       <% end %>
     </div>
   </div>
 
   <h4><%= @report_user.email %> – <%= (@period || "weekly").capitalize %> report</h4>
-  <p class="text-muted">Total: <strong><%= @total_hours %> h</strong></p>
+  <p class="text-muted">
+    Period:
+    <strong><%= @range.begin.to_date %></strong>
+    to
+    <strong><%= @range.end.to_date %></strong>
+    &nbsp;·&nbsp;
+    Total: <strong><%= format_duration_hours(@total_hours) %></strong>
+  </p>
 
   <h5>By day</h5>
   <%= line_chart @by_day, xtitle: "Date", ytitle: "Hours" %>
 
   <h5 class="mt-4">By category</h5>
-  <%= pie_chart @by_category, donut: true %>
+  <%= pie_chart @by_category.transform_keys { |k| human_category(k) }, donut: true %>
+
+  <h5 class="mt-4">Entries</h5>
+  <% if @entries_page.any? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Started</th>
+          <th>Ended</th>
+          <th>Duration</th>
+          <th>Category</th>
+          <th>Ticket</th>
+          <th>Task</th>
+          <th>Project</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @entries_page.each do |e| %>
+          <tr>
+            <td><%= e.started_at&.strftime("%Y-%m-%d %H:%M") %></td>
+            <td><%= e.ended_at&.strftime("%Y-%m-%d %H:%M") %></td>
+            <td><%= format_duration_hours(e.hours) %></td>
+            <td><%= human_category(e.category) %></td>
+            <td><%= e.ticket_ref %></td>
+            <td><%= e.task_name %></td>
+            <td><%= e.project&.name %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <p class="fw-bold">Total: <%= format_duration_hours(@total_hours) %></p>
+
+    <%= paginate @entries_page %>
+  <% else %>
+    <p class="text-muted">No entries for this period.</p>
+  <% end %>
 </div>

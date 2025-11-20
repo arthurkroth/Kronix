@@ -21,8 +21,11 @@ Rails.application.routes.draw do
       post "timer/stop",  to: "timer#stop",  as: :stop_timer
 
       # Manager/team & reports
-      get "team",    to: "manager#team",   as: :manager_team
-      get "reports", to: "reports#show",   as: :reports
+      get    "team",                     to: "manager#team",        as: :manager_team
+      post   "team/add_member",         to: "manager#add_member",  as: :manager_add_member
+      delete "team/remove_member/:id",  to: "manager#remove_member", as: :manager_remove_member
+
+      get "reports", to: "reports#show", as: :reports
 
       # Admin area
       namespace :admin do

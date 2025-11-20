@@ -23,8 +23,10 @@ gem 'chartkick'
 # time-based grouping for charts
 gem 'groupdate'
 # pagination
-gem 'kaminari'         
-
+gem 'kaminari'
+# PDF Export
+gem "prawn"
+gem "prawn-table"
 
 
 
