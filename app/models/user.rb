@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   # Devise modules (your list may already match this)
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :trackable
 
   # Roles – Rails 8 style enum
   # 0 = user, 1 = manager, 2 = admin

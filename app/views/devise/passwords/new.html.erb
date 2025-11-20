@@ -1,0 +1,28 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+          <h1 class="h4 text-center mb-3">Password Recovery</h1>
+
+          <p class="text-muted text-center mb-4">
+            If you forgot your Kronix password, please contact the administrator for assistance.
+          </p>
+
+          <div class="alert alert-info text-center">
+            Please email  
+            <strong>support@kronix-system.com</strong><br>
+            and we will help you recover your account.
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <%= link_to "Log in", new_user_session_path, class: "small" %>
+            <%= link_to "Sign up", new_user_registration_path, class: "small" %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
