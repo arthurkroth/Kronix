@@ -1,0 +1,57 @@
+<div class="container py-3">
+  <h1>Account security</h1>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Profile</h5>
+      <p><strong>Email:</strong> <%= @user.email %></p>
+      <p><strong>Role:</strong> <%= @user.role %></p>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Sign-in activity</h5>
+
+      <p>
+        <strong>Current sign-in:</strong>
+        <% if @user.respond_to?(:current_sign_in_at) && @user.current_sign_in_at.present? %>
+          <%= @user.current_sign_in_at %> from
+          <%= @user.respond_to?(:current_sign_in_ip) ? @user.current_sign_in_ip : "N/A" %>
+        <% else %>
+          N/A
+        <% end %>
+      </p>
+
+      <p>
+        <strong>Last sign-in:</strong>
+        <% if @user.respond_to?(:last_sign_in_at) && @user.last_sign_in_at.present? %>
+          <%= @user.last_sign_in_at %> from
+          <%= @user.respond_to?(:last_sign_in_ip) ? @user.last_sign_in_ip : "N/A" %>
+        <% else %>
+          N/A
+        <% end %>
+      </p>
+
+      <p>
+        <strong>Failed attempts (since last lock):</strong>
+        <% if @user.respond_to?(:failed_attempts) %>
+          <%= @user.failed_attempts %>
+        <% else %>
+          N/A
+        <% end %>
+      </p>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Password</h5>
+      <p>You can change your password here.</p>
+      <%= link_to "Change password", edit_user_registration_path, class: "btn btn-outline-primary" %>
+      <p class="mt-2 text-muted small">
+        Password must be at least 10 characters and include at least one letter and one number.
+      </p>
+    </div>
+  </div>
+</div>

@@ -7,24 +7,114 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <!-- Bootstrap 5 (CDN) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Rails application CSS (if you use it) -->
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 
-    <!-- Chartkick (uses Chart.js by default) -->
-    <%= javascript_include_tag "chartkick" %>
-    <%= javascript_include_tag "Chart.bundle" %>
+    <!-- Bootstrap 5 CSS via CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    >
+
+    <!-- JS: importmap (Rails) -->
+    <%= javascript_importmap_tags %>
+
+    <!-- Chartkick + Chart.js (so the charts render instead of “Loading…”) -->
+    <%= javascript_include_tag "chartkick", "Chart.bundle", "data-turbo-track": "reload" %>
   </head>
 
   <body>
-  <%= render "shared/navbar" %>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="<%= authenticated_root_path %>">Kronix</a>
 
-    <div class="container py-3">
-      <% flash.each do |k,v| %>
-        <div class="alert alert-<%= k == 'notice' ? 'success' : 'warning' %>"><%= v %></div>
-      <% end %>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <% if user_signed_in? %>
+              <li class="nav-item">
+                <%= link_to "Dashboard",
+                            dashboard_show_path,
+                            class: "nav-link#{current_page?(dashboard_show_path) ? ' active' : ''}" %>
+              </li>
+              <li class="nav-item">
+                <%= link_to "Entries",
+                            time_entries_path,
+                            class: "nav-link#{current_page?(time_entries_path) ? ' active' : ''}" %>
+              </li>
+              <li class="nav-item">
+                <%= link_to "Reports",
+                            reports_path,
+                            class: "nav-link#{current_page?(reports_path) ? ' active' : ''}" %>
+              </li>
+              <% if current_user.manager? || current_user.admin? %>
+                <li class="nav-item">
+                  <%= link_to "Team",
+                              manager_team_path,
+                              class: "nav-link#{current_page?(manager_team_path) ? ' active' : ''}" %>
+                </li>
+              <% end %>
+              <% if current_user.admin? %>
+                <li class="nav-item">
+                  <%= link_to "Admin",
+                              admin_users_path,
+                              class: "nav-link#{current_page?(admin_users_path) ? ' active' : ''}" %>
+                </li>
+              <% end %>
+              <li class="nav-item">
+                <%= link_to "Account",
+                            account_path,
+                            class: "nav-link#{current_page?(account_path) ? ' active' : ''}" %>
+              </li>
+            <% end %>
+          </ul>
+
+          <ul class="navbar-nav ms-auto">
+            <% if user_signed_in? %>
+              <li class="nav-item">
+                <span class="navbar-text me-2"><%= current_user.email %></span>
+              </li>
+              <li class="nav-item">
+                <%= button_to "Sign out",
+                              destroy_user_session_path,
+                              method: :delete,
+                              class: "btn btn-sm btn-outline-light",
+                              form: { class: "d-inline" } %>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to "Sign in",
+                            new_user_session_path,
+                            class: "btn btn-sm btn-outline-light" %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main content + flashes -->
+    <div class="container">
+      <%= render "shared/flash" if lookup_context.exists?("shared/_flash") %>
       <%= yield %>
-      <%= render "shared/footer" %>
     </div>
+
+    <!-- Optional footer partial if you already have one -->
+    <% if lookup_context.exists?("shared/_footer") %>
+      <%= render "shared/footer" %>
+    <% end %>
+
+    <!-- Bootstrap 5 JS (for navbar toggle, alerts close button, etc.) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous">
+    </script>
   </body>
 </html>

@@ -4,41 +4,43 @@ Rails.application.routes.draw do
   get "dashboard/show"
   resources :time_entries
   devise_for :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Only logged-in users can access the app
+  authenticated :user do
+    root to: "dashboard#show", as: :authenticated_root
 
-  #Only logged-in users can access the app
-    authenticated :user do
-      root to: "dashboard#show", as: :authenticated_root
+    # Timer & entries
+    resources :time_entries
+    post "timer/start", to: "timer#start", as: :start_timer
+    post "timer/stop",  to: "timer#stop",  as: :stop_timer
 
-      # Timer & entries
-      resources :time_entries
-      post "timer/start", to: "timer#start", as: :start_timer
-      post "timer/stop",  to: "timer#stop",  as: :stop_timer
+    # Manager/team & reports
+    get    "team",                     to: "manager#team",          as: :manager_team
+    post   "team/add_member",         to: "manager#add_member",    as: :manager_add_member
+    delete "team/remove_member/:id",  to: "manager#remove_member", as: :manager_remove_member
 
-      # Manager/team & reports
-      get    "team",                     to: "manager#team",        as: :manager_team
-      post   "team/add_member",         to: "manager#add_member",  as: :manager_add_member
-      delete "team/remove_member/:id",  to: "manager#remove_member", as: :manager_remove_member
+    get "reports", to: "reports#show", as: :reports
 
-      get "reports", to: "reports#show", as: :reports
+    # Account security page (explicit route)
+    get "account", to: "account#show", as: :account
 
-      # Admin area
-      namespace :admin do
-        resources :users, only: %i[index edit update]
-      end
+    # Admin area
+    namespace :admin do
+      resources :users, only: %i[index edit update]
     end
+  end
 
-  #If not logged in, send to sign in
+  # If not logged in, send to sign in
   root to: redirect("/users/sign_in")
 end
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+# Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
+# get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+# get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+
+# Defines the root path route ("/")
+# root "posts#index"
