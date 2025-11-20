@@ -1,7 +1,7 @@
 class TimeEntry < ApplicationRecord
   belongs_to :user
+  belongs_to :project, optional: true
 
-  # Basic helpers
   def active?
     ended_at.nil?
   end

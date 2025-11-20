@@ -1,0 +1,46 @@
+<div class="container py-3">
+  <h1>Reports</h1>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <%= form_with url: reports_path, method: :get, local: true, class: "row g-2" do %>
+        <% if current_user.manager? || current_user.admin? %>
+          <div class="col-md-5">
+            <label class="form-label">User</label>
+            <%= select_tag :user_id,
+              options_for_select(
+                [["(me)", ""]] +
+                (current_user.admin? ? User.order(:email) : current_user.team_members.order(:email))
+                  .map { |u| [u.email, u.id] },
+                params[:user_id]
+              ),
+              class: "form-select" %>
+          </div>
+        <% end %>
+
+        <div class="col-md-3">
+          <label class="form-label">Period</label>
+          <%= select_tag :period,
+                options_for_select(
+                  [["Weekly", "weekly"], ["Monthly", "monthly"]],
+                  @period || "weekly"
+                ),
+                class: "form-select" %>
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+          <%= submit_tag "Generate", class: "btn btn-primary w-100" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <h4><%= @report_user.email %> – <%= (@period || "weekly").capitalize %> report</h4>
+  <p class="text-muted">Total: <strong><%= @total_hours %> h</strong></p>
+
+  <h5>By day</h5>
+  <%= line_chart @by_day, xtitle: "Date", ytitle: "Hours" %>
+
+  <h5 class="mt-4">By category</h5>
+  <%= pie_chart @by_category, donut: true %>
+</div>

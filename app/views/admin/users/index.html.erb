@@ -1,0 +1,23 @@
+<div class="container py-3">
+  <h1>Admin – Users</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Manager</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |u| %>
+        <tr>
+          <td><%= u.email %></td>
+          <td><%= u.role %></td>
+          <td><%= u.manager&.email || "-" %></td>
+          <td><%= link_to "Edit", edit_admin_user_path(u) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

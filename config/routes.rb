@@ -12,12 +12,23 @@ Rails.application.routes.draw do
 
 
   #Only logged-in users can access the app
-  authenticated :user do
-    root to: "dashboard#show", as: :authenticated_root
-    resources :time_entries
-    post "timer/start", to: "timer#start", as: :start_timer
-    post "timer/stop",  to: "timer#stop",  as: :stop_timer
-  end
+    authenticated :user do
+      root to: "dashboard#show", as: :authenticated_root
+
+      # Timer & entries
+      resources :time_entries
+      post "timer/start", to: "timer#start", as: :start_timer
+      post "timer/stop",  to: "timer#stop",  as: :stop_timer
+
+      # Manager/team & reports
+      get "team",    to: "manager#team",   as: :manager_team
+      get "reports", to: "reports#show",   as: :reports
+
+      # Admin area
+      namespace :admin do
+        resources :users, only: %i[index edit update]
+      end
+    end
 
   #If not logged in, send to sign in
   root to: redirect("/users/sign_in")

@@ -1,32 +1,69 @@
-<%= form_with(model: time_entry) do |form| %>
-  <% if time_entry.errors.any? %>
-    <div class="alert alert-warning">
-      <h4><%= pluralize(time_entry.errors.count, "error") %> prevented saving:</h4>
-      <ul>
-        <% time_entry.errors.each do |e| %><li><%= e.full_message %></li><% end %>
-      </ul>
+<div class="container py-3">
+  <h2 class="mb-3"><%= @time_entry.persisted? ? "Edit Time Entry" : "New Time Entry" %></h2>
+
+  <%= form_with(model: @time_entry) do |form| %>
+    <% if @time_entry.errors.any? %>
+      <div class="alert alert-warning">
+        <h4><%= pluralize(@time_entry.errors.count, "error") %> prevented saving:</h4>
+        <ul class="mb-0">
+          <% @time_entry.errors.each do |e| %>
+            <li><%= e.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="mb-3">
+      <%= form.label :ticket_ref, "Ticket number" %>
+      <%= form.text_field :ticket_ref, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :task_name, "Task name" %>
+      <%= form.text_field :task_name, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :notes, "What was accomplished?" %>
+      <%= form.text_area :notes, rows: 4, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :category %>
+      <%= form.select :category, ["bau", "project", "meeting", "administrative"], {}, class: "form-select", id: "category-select" %>
+    </div>
+
+    <!-- Project fields (shown for category 'project') -->
+    <div id="project-fields" class="border rounded p-3 mb-3" style="display: none;">
+      <h5 class="mb-2">Project</h5>
+      <div class="mb-2">
+        <label class="form-label">Existing projects you’ve used</label>
+        <%= form.collection_select :project_id, @projects, :id, :name, { include_blank: "(Select existing project)" }, class: "form-select" %>
+      </div>
+      <div>
+        <label class="form-label">Or create a new project</label>
+        <%= text_field_tag :new_project_name, "", class: "form-control", placeholder: "New project name" %>
+        <small class="text-muted">Leave blank to use the selected existing project.</small>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-3">
+      <%= form.submit "Save", class: "btn btn-success" %>
+      <%= link_to "Back to Dashboard", authenticated_root_path, class: "btn btn-outline-secondary" %>
+      <%= link_to "Entries", time_entries_path, class: "btn btn-outline-secondary" %>
     </div>
   <% end %>
+</div>
 
-  <div class="mb-3">
-    <%= form.label :ticket_ref %>
-    <%= form.text_field :ticket_ref, class: "form-control" %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :task_name %>
-    <%= form.text_field :task_name, class: "form-control" %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :notes, "What was accomplished?" %>
-    <%= form.text_area :notes, rows: 4, class: "form-control" %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :category %>
-    <%= form.select :category, ["bau", "project", "meeting"], {}, class: "form-select" %>
-  </div>
-
-  <%= form.submit class: "btn btn-success" %>
-<% end %>
+<script>
+(function() {
+  var cat = document.getElementById("category-select");
+  var proj = document.getElementById("project-fields");
+  function toggle() {
+    if (!cat || !proj) return;
+    proj.style.display = (cat.value === "project") ? "block" : "none";
+  }
+  toggle();
+  if (cat) cat.addEventListener("change", toggle);
+})();
+</script>
