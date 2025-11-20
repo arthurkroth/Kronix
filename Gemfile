@@ -17,13 +17,13 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 # login
-gem 'devise'
+gem "devise"
 # charts
-gem 'chartkick'
+gem "chartkick"
 # time-based grouping for charts
-gem 'groupdate'
+gem "groupdate"
 # pagination
-gem 'kaminari'
+gem "kaminari"
 # PDF Export
 gem "prawn"
 gem "prawn-table"

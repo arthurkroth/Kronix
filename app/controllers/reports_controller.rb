@@ -78,7 +78,7 @@ class ReportsController < ApplicationController
       doc.move_down 10
 
       if @entries.any?
-        data = [["Started", "Ended", "Duration", "Category", "Ticket", "Task", "Project"]]
+        data = [ [ "Started", "Ended", "Duration", "Category", "Ticket", "Task", "Project" ] ]
         @entries.each do |e|
           data << [
             e.started_at&.strftime("%Y-%m-%d %H:%M"),

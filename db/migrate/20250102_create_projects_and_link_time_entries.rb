@@ -6,7 +6,7 @@ class CreateProjectsAndLinkTimeEntries < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :projects, [:user_id, :name], unique: true
+    add_index :projects, [ :user_id, :name ], unique: true
 
     add_reference :time_entries, :project, foreign_key: true
   end

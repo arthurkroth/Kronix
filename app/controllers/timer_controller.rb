@@ -1,7 +1,7 @@
 class TimerController < ApplicationController
   before_action :authenticate_user!
 
-  #Start a task (auto-stops any running one)
+  # Start a task (auto-stops any running one)
   def start
     ActiveRecord::Base.transaction do
       # 1)Stop the current active one if exists
@@ -9,10 +9,10 @@ class TimerController < ApplicationController
         stop_and_save(active)
       end
 
-      #Fill gap since last finished task as "administrative"
+      # Fill gap since last finished task as "administrative"
       fill_admin_gap!
 
-      #Start the new entry
+      # Start the new entry
       current_user.time_entries.create!(
         started_at: Time.current,
         category: params[:category].presence || "bau"
@@ -22,7 +22,7 @@ class TimerController < ApplicationController
     redirect_to authenticated_root_path, notice: "Timer started."
   end
 
-  #Stop the current task and send user to edit page to fill details
+  # Stop the current task and send user to edit page to fill details
   def stop
     if (active = current_user.time_entries.find_by(ended_at: nil))
       stop_and_save(active)
@@ -40,11 +40,11 @@ class TimerController < ApplicationController
     entry.save!
   end
 
-  #Auto-create an Administrative entry from the last finished end_time up to now
+  # Auto-create an Administrative entry from the last finished end_time up to now
   def fill_admin_gap!
     now = Time.current
 
-    #last finished entry for this user
+    # last finished entry for this user
     last_finished = current_user.time_entries
                                 .where.not(ended_at: nil)
                                 .order(ended_at: :desc)
@@ -55,7 +55,7 @@ class TimerController < ApplicationController
     gap_end   = now
     return unless gap_start < gap_end
 
-    #Guardrails: only fill if the last end was today and gap <= 2 hours
+    # Guardrails: only fill if the last end was today and gap <= 2 hours
     return unless gap_start.to_date == now.to_date
     return if (gap_end - gap_start) > 1.hours
 

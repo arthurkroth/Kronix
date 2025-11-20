@@ -24,7 +24,7 @@ class User < ApplicationRecord
   def full_label
     "#{email} (#{role})"
   end
-  
+
   # Password complexity (optional – OWASP recommends longer over “weird rules”)
   validate :password_complexity
   private
@@ -36,5 +36,4 @@ class User < ApplicationRecord
       errors.add :password, "must include at least one letter and one number"
     end
   end
-
 end
