@@ -14,18 +14,6 @@
                       url: session_path(resource_name),
                       html: { class: "mt-2" }) do |f| %>
 
-            <% if flash.alert.present? %>
-              <div class="alert alert-danger">
-                <%= flash.alert %>
-              </div>
-            <% end %>
-
-            <% if flash.notice.present? %>
-              <div class="alert alert-success">
-                <%= flash.notice %>
-              </div>
-            <% end %>
-
             <div class="mb-3">
               <%= f.label :email, class: "form-label" %>
               <%= f.email_field :email,
