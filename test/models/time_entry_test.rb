@@ -3,7 +3,7 @@ require "test_helper"
 class TimeEntryTest < ActiveSupport::TestCase
   def setup
     @user = User.create!(
-      email: "test_user@example.com",
+      email: "model_test@example.com",
       password: "Password123",
       password_confirmation: "Password123"
     )
@@ -11,12 +11,11 @@ class TimeEntryTest < ActiveSupport::TestCase
 
   test "is valid with basic attributes" do
     entry = TimeEntry.new(
-      user: @user,
+      user:       @user,
       started_at: Time.zone.parse("2025-11-20 09:00"),
       ended_at:   Time.zone.parse("2025-11-20 10:00"),
       category:   "BAU",
-      ticket:     "T-1234",
-      task_name:  "Test task"
+      task_name:  "Model test task"
     )
 
     assert entry.valid?, "time entry with basic attributes should be valid"
