@@ -69,7 +69,7 @@ class TimeEntriesController < ApplicationController
     params.require(:time_entry).permit(
       :ticket_ref,
       :task_name,
-      :description,      
+      :description,
       :category,
       :started_at,
       :ended_at,
