@@ -69,7 +69,7 @@ class TimeEntriesController < ApplicationController
     params.require(:time_entry).permit(
       :ticket_ref,
       :task_name,
-      :description,      # if your column is called something else (e.g. :notes) just change this
+      :description,      
       :category,
       :started_at,
       :ended_at,

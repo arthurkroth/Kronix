@@ -25,7 +25,7 @@ class User < ApplicationRecord
     "#{email} (#{role})"
   end
 
-  # Password complexity (optional – OWASP recommends longer over “weird rules”)
+  # Password complexity
   validate :password_complexity
   private
 
